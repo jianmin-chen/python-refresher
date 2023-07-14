@@ -59,6 +59,12 @@ class TestPhysics(unittest.TestCase):
     def test_calculate_auv_angular_acceleration(self):
         pass
 
+    def test_calculate_auv2_acceleration(self):
+        pass
+
+    def test_calculate_auv2_angular_acceleration(self):
+        pass
+
 
 if __name__ == "__main__":
     unittest.main()

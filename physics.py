@@ -1,4 +1,4 @@
-from numpy import sin, cos, pi
+import numpy as np
 
 # Constants
 g = 9.81
@@ -120,7 +120,7 @@ def calculate_torque(F_magnitude: float, F_direction: float, r: float) -> float:
     """
 
     # r = r * F
-    force = F_magnitude * sin(F_direction * (pi / 180))
+    force = F_magnitude * np.sin(F_direction * (np.pi / 180))
     torque = r * force
     return torque
 
@@ -167,17 +167,65 @@ def calculate_auv_acceleration(
     return acceleration
 
 
-def calculate_auv_angular_acceleration(F_magnitude: float, F_angle: float) -> float:
+def calculate_auv_angular_acceleration(
+    F_magnitude: float, F_angle: float, inertia: float, thruster_distance: float
+) -> float:
     """
     Calculates the angular acceleration of the AUV.
 
         Parameters:
-            F_magnitude (float)
+            F_magnitude (float): The magnitude of force applied by the thruster in Newtons.
+            F_angle (float): The angle of the force applied by the thruster in radians.
+            inertia (float): The moment of inertia of the AUV in kg * m^2.
+            thruster_distance (float): The distance from the center of the mass of the AUV to the thruster in meters.
     """
 
-    pass
+    torque = calculate_torque(F_magnitude, F_angle)
+    angular_acceleration = torque / inertia  # Rearrange r = rF
+    return angular_acceleration
+
+
+def calculate_auv2_acceleration(T: np.ndarray, alpha: float, mass: float = 100):
+    """
+    Calculates the acceleration of the AUV in the 2D plane.
+
+        Parameters:
+            T (np.ndarray): An `np.ndarray` of the magnitudes of the forces applied by the thrusters in Newtons.
+            alpha (float): The angle of the thrusters in radians.
+            mass (float): The mass of the AUV in kilograms.
+    """
+
+    if mass <= 0:
+        raise ValueError("Mass should be > 0 kilograms")
+
+    # F = ma
+    # a = magnitude * alpha
+    force = mass * (T * alpha)
+    # Now do the same thing as calculate_acceleration but apply it to ndarray
+    # a = F / m
+    acceleration = force / mass
+    return np.sum(acceleration)
+
+
+def calculate_auv2_angular_acceleration(
+    T: np.ndarray, alpha: float, L: float, l: float, inertia: float = 100
+):
+    """
+    Calculates the angular acceleration of the AUV.
+
+        Returns:
+            T (np.ndarray): An `np.ndarray` of the magnitudes of the forces applied by the thrusters in Newtons.
+            alpha (float): The angle of the thrusters in radians.
+            L (float): The distance from the center of mass of the AUV to the thrusters in meters.
+            l (float): The distance from the center of mass of the AUV to the thrusters in meters.
+            inertia (float): The moment of inertia of the AUV in kg * m^2
+    """
+
+    # r = rF
+    torque = T * np.sin(alpha)
+    angular_acceleration = torque / inertia
+    return angular_acceleration
 
 
 if __name__ == "__main__":
-    print(calculate_buoyancy(60, density_water))
-    print(will_it_float(8, 10000))
+    print(calculate_auv2_angular_acceleration(np.array([1, 2, 3]), np.pi / 2, 5, 5))
