@@ -29,6 +29,8 @@ def sqrt(a):
 
 
 def power(a, b):
+    if b < 0:
+        raise ValueError("Integers to negative integer powers are not allowed.")
     return np.power(a, b)
 
 

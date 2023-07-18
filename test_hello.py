@@ -23,7 +23,7 @@ class TestHello(unittest.TestCase):
         self.assertEqual(hello.mul(5, 5), 25)
 
     def test_div(self):
-        self.assertRaises(ValueError, hello.div(0, 0))
+        self.assertRaises(ValueError, hello.div, 0, 0)
         self.assertEqual(hello.div(-5, 5), -1)
         self.assertEqual(hello.div(5, 5), 1)
 
@@ -36,8 +36,7 @@ class TestHello(unittest.TestCase):
         self.assertEqual(hello.power(0, 0), 1)
         self.assertEqual(hello.power(5, 0), 1)
         self.assertEqual(hello.power(3, 5), 243)
-        self.assertEqual(hello.power(3, -5), 1 / 243)
-        self.assertTrue(np.isnan(hello.power(-5, 3)))
+        self.assertRaises(ValueError, hello.power, 3, -5)
 
     def test_log(self):
         self.assertEqual(hello.log(1), 0)

@@ -310,43 +310,45 @@ def simulate_auv2_motion(
         "x": np.array([x0]),
         "y": np.array([y0]),
         "theta": np.array([theta0]),
-        "v": np.array([0]),
+        "v": [[0, 0]],
         "omega": np.array([0]),
-        "a": np.array([calculate_auv2_acceleration(T, alpha, mass)]),
+        "a": [[0, 0]],
     }
 
     angular_acceleration = calculate_auv2_angular_acceleration(T, alpha, L, l, inertia)
 
     t = dt
     while t < t_final:
-        angular_velocity = angular_acceleration * dt + data["omega"][-1]
+        angular_velocity = angular_acceleration * dt + data["omega"][-1]  # omega
 
-        robot_angle = data["omega"][-1] * dt + data["theta"][-1]
+        robot_angle = angular_velocity * dt + data["theta"][-1]  # theta
 
-        robot_acceleration = calculate_auv2_acceleration(T, robot_angle, mass)
+        robot_acceleration = calculate_auv2_acceleration(T, alpha, mass)
 
-        robot_velocity = data["a"][-1] * dt + data["v"][-1]
+        velocity_x = data["a"][-1][0] * dt + data["v"][-1][0]
+        velocity_y = data["a"][-1][1] * dt + data["v"][-1][1]
 
-        robot_x = data["v"][-1] * dt + data["x"][-1]
-        robot_y = data["v"][-1] * dt + data["y"][-1]
+        robot_x = data["v"][-1][0] * dt + data["x"][-1]
+        robot_y = data["v"][-1][1] * dt + data["y"][-1]
 
         data["omega"] = np.append(data["omega"], angular_velocity)
 
         data["theta"] = np.append(data["theta"], robot_angle)
 
-        data["a"] = np.append(data["a"], robot_acceleration)
+        data["a"].append(robot_acceleration)
 
-        data["v"] = np.append(data["v"], robot_velocity)
+        data["v"].append([velocity_x, velocity_y])
 
         data["x"] = np.append(data["x"], robot_x)
         data["y"] = np.append(data["y"], robot_y)
 
-        data["t"] = np.append(data["t"], t)
         t += dt
 
+    data["a"] = np.array(data["a"])
+    data["v"] = np.array(data["v"])
     return data
 
 
 if __name__ == "__main__":
-    res = simulate_auv2_motion(np.array([4, 4, -2, -2]), np.pi / 4, 4, 4)
-    print(res["t"].size, res["x"].size, res["y"].size)
+    x = simulate_auv2_motion(np.array([3, 50, 45, 3]), np.pi / 4, 1, 1, 1)
+    print(x["t"].size, x["x"].size, x["y"].size)
