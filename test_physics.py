@@ -35,7 +35,7 @@ class TestPhysics(unittest.TestCase):
         )
 
     def test_calculate_acceleration(self):
-        self.assertRaises(ValueError, physics.calculate_acceleration(0, 0))  # m != 0
+        self.assertRaises(ValueError, physics.calculate_acceleration, (0, 0))  # m != 0
         self.assertRaises(ValueError, physics.calculate_acceleration(0, -1))  # m != < 0
         self.assertRaises(ValueError, physics.calculate_acceleration(-1, 1))  # F != < 0
         self.assertEqual(physics.calculate_acceleration(0, 5), 0)
@@ -45,7 +45,6 @@ class TestPhysics(unittest.TestCase):
         self.assertRaises(ValueError, physics.calculate_angular_acceleration(1, 0))
         self.assertRaises(ValueError, physics.calculate_angular_acceleration(1, -1))
         self.assertRaises(ValueError, physics.calculate_angular_acceleration(-1, 1))
-        self.assertEqual()
 
     def test_calculate_torque(self):
         pass
